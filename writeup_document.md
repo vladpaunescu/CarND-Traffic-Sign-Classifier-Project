@@ -28,6 +28,20 @@ The goals / steps of this project are the following:
 [image9]: ./writeup_assets/rotation_samples_histogram.png "Rotation samples histogram"
 [image10]: ./writeup_assets/augmented_dataset_histogram.png "Augmented dataset histogram"
 [image11]: ./writeup_assets/Y_equalized_samples.png "Y equalized samples"
+[image12]: ./writeup_assets/network_activations.png "conv1 activations"
+
+[test1]: ./imgs_small/left_turn.jpeg "Left turn sign"
+[test2]: ./imgs_small/5_small.png "Stop sign correct"
+[test3]: ./imgs_small/8_small.png "No entry"
+[test4]: ./imgs_small/6_small.png "No vechicles over 12 metric tons allowed"
+[test5]: ./imgs_small/11_small.png "Speed limit 80km/h at an angle"
+
+
+[topk1]: ./writeup_assets/turn_left_ahead.png "Top-5 Turn left ahead"
+[topk2]: ./writeup_assets/stop_sign.png "Top-5 Stop Sign"
+[topk3]: ./writeup_assets/pedestrian_crossing.png "Top-5 Pedestrian Crossing"
+
+
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -257,47 +271,85 @@ More details about the reference paper can be found in the original [sermanet](h
 
 ####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
+The code for testing on new images starts at **Cell 274** of the iPython notebook.
+First, I converted the images to YUV, and applied adaptive histogram equalization.
+
 I tested the trained model on many traffic sign images.
 Some of them are don't belong to the categories that the network was trained on.
+I decided to include them to see if the network generalizes, i.e. it predicts a red circle sign (restriction sign) as a restriction sign. And indeed it does that.
+For 13 tons sign itp redicted speed limit (130 km/h) for instance.
+
 In total there are 16 images.
 
-Here are five German traffic signs that I found on the web
+In the python notebook, out of 10 considered traffic signs 8 were predicted correctly.
+So the accuracy is 80 %.
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+Here are five German traffic signs that I decided to include here.
+For a complete set of images, please consult the ipyhton notebook.
 
-The first image might be difficult to classify because ...
+
+
+
+![alt text][test1]
+![alt text][test2] 
+![alt text][test3]
+![alt text][test4]
+![alt text][test5]
+
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
-The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
+The code for making predictions on my final model is located in the tenth cells 276, 277, 278, 267,282 of the notebook.
 
 Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Turn left ahead 		| Turn left ahead								| 
+| Stop       			| Stop  										|
+| No entry				| No entry										|
+| No vehicles over 12 tons allowed	| Speed limit (120km/h)[1] 			|
+| Speed limit (80km/h)	| Speed limit (80km/h)       					|
+
+[1] not a trained category
+
+In the python notebook, out of 10 considered traffic signs 8 were predicted correctly.
+So the accuracy is 80 %. This is lower then the test accuracy, since my tests were from different angles, and different lighting conditions.
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
-
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
 
 
-For the second image ... 
+The code for making predictions on my final model is located in the cell 278, 267, 282 of the Ipython notebook.
+
+Them model is genreally very sure when it's correct.
+
+For the Turn left ahead image, the model is 0.99 sure that there is turn left ahead.
+
+![alt text][topk1]
+
+For the Stop sign image, the model is 0.989 sure that there is turn left ahead.
+
+![alt text][topk2]
+
+For this image that is not from the categories that network was trained on, pedestrian crossing sign, the network is not sure as you can see in the image below.
+It oiscilates between Road Work, Children Crossing, and Bicicles crossing.
+It sees the crossing sign - for corssings, and the triangle, for road work.
+Unfortunately, here color information would had been helpful to decide.
+Color (U,V channels) is not included in my inplmentation, but it can be easily extended.
+
+![alt text][topk3]
+
+
+####4. Network Activations
+
+In the last challenge, I visualized layer activations.
+Code is located in cells 258, 259, and 261. 
+While first conv1 layer activations retain image aspect, conv2 can't be easily analyzed.
+From the image below, you can even read the stop characters fro mthe stop sign.
+You can see different filters learn different edge orientations - gradients.
+![alt text][image12]
+
+
